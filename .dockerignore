@@ -1,0 +1,9 @@
+tmp/
+build/
+__pycache__
+*.py[co]
+*.img
+*.iso
+*.qcow2
+*.vmdk
+*.vmx

@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+#
+# This file is part of Liri.
+#
+# Copyright (C) 2019 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+from liriosimgcreate import DiskBuilder, LiveBuilder, parse_manifest
+
+if __name__ == '__main__':
+    import argparse
+    import os
+    import sys
+
+    if sys.version_info < (3, 6):
+        sys.exit('Python 3.6 or better is needed, aborting....')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--workdir', default='/var/tmp', metavar='PATH', help='Path where all temporary files are created')
+    parser.add_argument('--force', '-f', action='store_true', default=False, help='Overwrite previously generated files')
+    parser.add_argument('--configdir', help='Directory that contains media configuration files to be copied into the image')
+    parser.add_argument('--manifest', help='Image definition YAML file')
+    parser.add_argument('--fslabel', help='File system label for live images (max 32 bytes)')
+    parser.add_argument('--debug', action='append', help='Show more information during the process (possibile values: run)')
+    parser.add_argument('--output', '-o', help='Name of the image file to create')
+    args = parser.parse_args()
+
+    if args.manifest is None or args.output is None:
+        parser.print_help()
+        sys.exit(1)
+
+    if args.configdir and not os.path.isdir(args.configdir):
+        sys.exit('Invalid media configuration directory')
+    if not os.path.exists(os.path.join(args.configdir, 'README-devel.md')):
+        sys.exit('Invalid media configuration directory')
+
+    if not os.path.isfile(args.manifest):
+        sys.exit('Manifest file does not exist')
+
+    manifest = parse_manifest(args.manifest)
+
+    if args.fslabel and manifest.type != 'live':
+        sys.exit('Use --fslabel only for live images')
+
+    if manifest.type == 'live':
+        builder = LiveBuilder(filename=args.output, fslabel=args.fslabel, manifest=manifest,
+                              configdir=args.configdir, workdir=args.workdir,
+                              debug=args.debug, force=args.force)
+        builder.initialize()
+        builder.build()
+    elif manifest.type == 'disk':
+        builder = DiskBuilder(filename=args.output, manifest=manifest, configdir=args.configdir,
+                              workdir=args.workdir, debug=args.debug, force=args.force)
+        builder.initialize()
+        builder.build()
