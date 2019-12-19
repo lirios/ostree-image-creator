@@ -1,0 +1,30 @@
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name = "mkliriosimage"
+version = "0.1.0"
+authors = ["Pier Luigi Fiorini <pierluigi.fiorini@liri.io>"]
+license = "GPL-3.0-or-later"
+edition = "2018"
+default-run = "mkliriosimage"
+publish = false
+
+[lib]
+name = "mkliriosimage"
+path = "src/lib.rs"
+
+[dependencies]
+log = "0.4.0"
+env_logger = "0.7.1"
+clap = "2.33.0"
+shell-words = "0.1.0"
+uname = "0.1.1"
+bytefmt = "0.1.7"
+chrono = "0.4.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+tempfile = "3.1.0"
+libc = "0.2"
+failure = "0.1.2"
+tera = "1.0.1"
+nix = "0.16.1"

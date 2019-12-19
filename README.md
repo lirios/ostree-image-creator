@@ -8,18 +8,18 @@ mkliriosimage
 
 Tool to build Liri OS images.
 
-!!!!!!!! THIS IS A PROTOTYPE, the repository will be FORCE PUSHED frequently !!!!!!!!!!!!
+This program uses Rust logging that you can configure with the `RUST_LOG`
+environment variable, please check [this](https://doc.rust-lang.org/1.1.0/log/index.html) out.
 
 ## Dependencies
 
 ```sh
 sudo dnf install -y \
-    python3-gobject-base \
-    python3-humanfriendly \
-    rpm-ostree-devel \
-    ostree-devel \
     coreutils \
     util-linux \
+    ostree \
+    syslinux \
+    syslinux-nonlinux \
     genisoimage \
     xorriso \
     isomd5sum \
@@ -32,19 +32,13 @@ sudo dnf install -y \
 Build with:
 
 ```sh
-./setup.py build
+cargo build
 ```
 
-Install for all the users in your system:
+Run with (it needs root privileges):
 
 ```sh
-./setup.py install # use sudo if necessary
-```
-
-Or install for your user account only:
-
-```sh
-./setup.py install --user
+sudo cargo run
 ```
 
 ## Licensing

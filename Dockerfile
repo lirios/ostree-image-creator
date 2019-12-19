@@ -1,20 +1,26 @@
-FROM fedora:31
+FROM rust:1.40-slim AS build
+RUN mkdir /source
+COPY Cargo* /source
+COPY src/ /source/src
+WORKDIR /source
+RUN set -ex && \
+    cargo build --release && \
+    strip target/release/mkliriosimage && \
+    mkdir /build && \
+    cp target/release/mkliriosimage /build/
 
-COPY . /app
+FROM fedora:31
 RUN set -ex && \
     dnf install -y --setopt='tsflags=' --nodocs \
-        python3-gobject-base \
-        python3-humanfriendly \
-        rpm-ostree-devel \
-        ostree-devel \
         coreutils \
         util-linux \
+        ostree \
+        syslinux \
+        syslinux-nonlinux \
         genisoimage \
         xorriso \
         isomd5sum \
         squashfs-tools \
-        grub2 && \
-    cd /app && \
-    ./setup.py build && \
-    ./setup.py install --prefix=/usr
-ENTRYPOINT ["mkliriosimage"]
+        grub2
+COPY --from=build /build/mkliriosimage /usr/bin
+CMD "/usr/bin/mkliriosimage"

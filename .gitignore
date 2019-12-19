@@ -1,9 +1,14 @@
-tmp/
-build/
-__pycache__
-*.py[co]
+# Ignore output files
+/tmp
 *.img
 *.iso
 *.qcow2
 *.vmdk
 *.vmx
+
+# Ignore Rust binary files
+/target
+**/*.rs.bk
+
+# Ignore Visual Studio Code
+*.code-workspace
