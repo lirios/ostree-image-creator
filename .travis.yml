@@ -1,8 +1,14 @@
-language: python
+language: rust
 
-script:
-  - python setup.py build
-  - python setup.py install --user
+rust:
+  - stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
+
+cache: cargo
 
 notifications:
   email: false
