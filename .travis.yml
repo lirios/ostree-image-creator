@@ -1,5 +1,8 @@
 language: rust
 
+services:
+  - docker
+
 rust:
   - stable
   - beta
@@ -9,6 +12,12 @@ matrix:
     - rust: nightly
 
 cache: cargo
+
+deploy:
+  provider: script
+  script: ./.travis/docker-push
+  on:
+    branch: master
 
 notifications:
   email: false
