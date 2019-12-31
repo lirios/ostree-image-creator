@@ -11,6 +11,9 @@ RUN set -ex && \
 
 FROM fedora:31
 RUN set -ex && \
+    groupadd -g 1002 jenkins && \
+    useradd -c "Jenkins" -u 1001 -g 1002 -m -G wheel jenkins && \
+    echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/wheel && \
     dnf install -y --setopt='tsflags=' --nodocs \
         coreutils \
         util-linux \
@@ -23,4 +26,5 @@ RUN set -ex && \
         squashfs-tools \
         grub2
 COPY --from=build /build/mkliriosimage /usr/bin
-CMD "/usr/bin/mkliriosimage"
+USER jenkins
+CMD "sudo /usr/bin/mkliriosimage"
