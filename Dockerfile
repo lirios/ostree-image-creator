@@ -1,6 +1,6 @@
 FROM rust:1.40-slim AS build
 RUN mkdir /source
-COPY Cargo* /source
+COPY Cargo* /source/
 COPY src/ /source/src
 WORKDIR /source
 RUN set -ex && \
