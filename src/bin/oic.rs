@@ -47,7 +47,7 @@ fn main() {
 
     // Command line arguments
     let matches = App::new("oic")
-        .version("1.0")
+        .version(env!("CARGO_PKG_VERSION"))
         .about("Creates images of an OSTree based operating system.")
         .author("Pier Luigi Fiorini")
         .arg(
