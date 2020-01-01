@@ -10,7 +10,6 @@ extern crate clap;
 extern crate env_logger;
 #[macro_use]
 extern crate failure;
-extern crate nix;
 extern crate log;
 extern crate serde;
 extern crate shell_words;

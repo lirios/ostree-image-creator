@@ -21,9 +21,7 @@ use crate::templates;
 
 use bytefmt;
 use log::{debug, error, info};
-use nix::unistd;
 use std::convert::From;
-use std::env;
 use std::fs;
 use std::io::{self, BufReader, Read, Write};
 use std::os::unix::fs::PermissionsExt;
@@ -543,27 +541,6 @@ impl Creator for LiveCreator {
         if has_checkisomd5 {
             step!("Implanting MD5 checksum in ISO image");
             cmd::run(&["implantisomd5", &tmp_isofile])?;
-        }
-
-        // Change ownership if we are running with sudo
-        let sudo_uid = env::var("SUDO_UID")
-            .unwrap_or_default()
-            .parse::<u32>()
-            .unwrap_or(0);
-        let sudo_gid = env::var("SUDO_GID")
-            .unwrap_or_default()
-            .parse::<u32>()
-            .unwrap_or(0);
-        if sudo_uid > 0 && sudo_gid > 0 {
-            step!("Changing file ownership to {}:{}", &sudo_uid, &sudo_gid);
-            match unistd::chown(
-                Path::new(&tmp_isofile),
-                Some(unistd::Uid::from_raw(sudo_uid)),
-                Some(unistd::Gid::from_raw(sudo_gid)),
-            ) {
-                Err(why) => error!("Failed to change ownership: {:?}", why),
-                Ok(()) => {}
-            }
         }
 
         // Move the file where the user expects it to be
