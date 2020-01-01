@@ -1,16 +1,16 @@
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name = "mkliriosimage"
+name = "ostree-image-creator"
 version = "0.1.0"
 authors = ["Pier Luigi Fiorini <pierluigi.fiorini@liri.io>"]
 license = "GPL-3.0-or-later"
 edition = "2018"
-default-run = "mkliriosimage"
+default-run = "oic"
 publish = false
 
 [lib]
-name = "mkliriosimage"
+name = "ostreeimagecreator"
 path = "src/lib.rs"
 
 [dependencies]

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  ***************************************************************************/
 
-extern crate mkliriosimage;
+extern crate ostreeimagecreator;
 
 use clap::{App, Arg};
 use env_logger;
@@ -15,7 +15,7 @@ use std::path::Path;
 use std::process;
 use uname;
 
-use mkliriosimage::creator;
+use ostreeimagecreator::creator;
 
 fn main() {
     if env::var("RUST_LOG").is_err() {
@@ -46,9 +46,9 @@ fn main() {
     };
 
     // Command line arguments
-    let matches = App::new("mkliriosimage")
+    let matches = App::new("oic")
         .version("1.0")
-        .about("Creates images of Liri OS.")
+        .about("Creates images of an OSTree based operating system.")
         .author("Pier Luigi Fiorini")
         .arg(
             Arg::with_name("workdir")
@@ -135,7 +135,7 @@ fn main() {
                 None
             };
 
-            mkliriosimage::start(
+            ostreeimagecreator::start(
                 &manifest,
                 &arch,
                 matches.value_of("workdir").unwrap(),

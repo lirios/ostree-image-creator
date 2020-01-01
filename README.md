@@ -1,12 +1,13 @@
-mkliriosimage
-=============
+ostree-image-creator
+====================
 
 [![License](https://img.shields.io/badge/license-GPLv3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![GitHub release](https://img.shields.io/github/release/lirios/mkliriosimage.svg)](https://github.com/lirios/mkliriosimage)
-[![Build Status](https://travis-ci.org/lirios/mkliriosimage.svg?branch=develop)](https://travis-ci.org/lirios/mkliriosimage)
-[![GitHub issues](https://img.shields.io/github/issues/lirios/mkliriosimage.svg)](https://github.com/lirios/mkliriosimage/issues)
+[![GitHub release](https://img.shields.io/github/release/lirios/ostree-image-creator.svg)](https://github.com/lirios/ostree-image-creator)
+[![Build Status](https://travis-ci.org/lirios/ostree-image-creator.svg?branch=develop)](https://travis-ci.org/lirios/ostree-image-creator)
+[![GitHub issues](https://img.shields.io/github/issues/lirios/ostree-image-creator.svg)](https://github.com/lirios/ostree-image-creator/issues)
 
-Tool to build Liri OS images.
+ostree-image-creator, or `oic`, is a tool to create live and disk images
+for an OSTree-based operating system.
 
 This program uses Rust logging that you can configure with the `RUST_LOG`
 environment variable, please check [this](https://doc.rust-lang.org/1.1.0/log/index.html) out.
