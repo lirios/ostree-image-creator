@@ -15,6 +15,7 @@ RUN set -ex && \
         coreutils \
         util-linux \
         e2fsprogs \
+        dosfstools \
         ostree \
         syslinux \
         syslinux-nonlinux \

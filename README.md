@@ -19,6 +19,7 @@ sudo dnf install -y \
     coreutils \
     util-linux \
     e2fsprogs \
+    dosfstools \
     ostree \
     syslinux \
     syslinux-nonlinux \
