@@ -42,6 +42,9 @@ pub struct Manifest {
     #[serde(default = "default_size")]
     pub size: String,
 
+    #[serde(default = "default_selinux")]
+    pub selinux: bool,
+
     pub osname: String,
 
     #[serde(rename(deserialize = "main-ref"))]
@@ -59,6 +62,10 @@ pub struct Manifest {
 
     #[serde(default)]
     pub live: LiveOptions,
+}
+
+fn default_selinux() -> bool {
+    false
 }
 
 fn default_size() -> String {

@@ -10,11 +10,11 @@ macro_rules! step {
     ($fmt:expr, $($arg:tt)*) => (print!(concat!("‣ \x1b[0;1;39m", $fmt, "\x1b[0m\n"), $($arg)*));
 }
 
+use crate::cmd;
 use crate::creator::BuildError;
 use crate::creator::BuildResult;
 use crate::creator::Creator;
 use crate::creator::Manifest;
-use crate::cmd;
 use crate::diskimage::DiskImage;
 use crate::ostree;
 use crate::templates;
@@ -50,6 +50,7 @@ pub struct LiveCreator {
     osname: String,
     arch: String,
     size: u64,
+    selinux: bool,
     repodir: PathBuf,
     repo_is_local: bool,
     remote_url: String,
@@ -116,6 +117,7 @@ impl LiveCreator {
             osname: manifest.osname.to_owned(),
             arch: arch.to_string(),
             size: size,
+            selinux: manifest.selinux,
             repodir: repodir,
             repo_is_local: is_local,
             remote_url: manifest.remote_url.to_owned(),
@@ -197,12 +199,14 @@ impl LiveCreator {
             fs::create_dir_all(vardir.join(&dirname))?;
         }
         let homedir = vardir.join("home");
-        let label = cmd::check_output(&["matchpathcon", "-n", "/home"])?.to_string();
-        cmd::run(&[
-            "chcon",
-            &label,
-            &homedir.into_os_string().into_string().unwrap(),
-        ])?;
+        if self.selinux {
+            let label = cmd::check_output(&["matchpathcon", "-n", "/home"])?.to_string();
+            cmd::run(&[
+                "chcon",
+                &label,
+                &homedir.into_os_string().into_string().unwrap(),
+            ])?;
+        }
 
         Ok(())
     }
@@ -555,7 +559,7 @@ impl Creator for LiveCreator {
             match unistd::chown(
                 Path::new(&tmp_isofile),
                 Some(unistd::Uid::from_raw(sudo_uid)),
-                Some(unistd::Gid::from_raw(sudo_gid))
+                Some(unistd::Gid::from_raw(sudo_gid)),
             ) {
                 Err(why) => error!("Failed to change ownership: {:?}", why),
                 Ok(()) => {}
