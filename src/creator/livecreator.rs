@@ -543,8 +543,9 @@ impl Creator for LiveCreator {
             cmd::run(&["implantisomd5", &tmp_isofile])?;
         }
 
-        // Move the file where the user expects it to be
-        fs::rename(&tmp_isofile, &self.filename)?;
+        // Move the file where the user expects it to be (rename doesn't work
+        // on containers that mount the workspace as a volume)
+        cmd::run(&["mv", "-f", &tmp_isofile, &self.filename])?;
         println!("Wrote: {}", &self.filename);
 
         Ok(())
