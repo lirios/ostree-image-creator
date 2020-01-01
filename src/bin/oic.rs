@@ -87,6 +87,13 @@ fn main() {
                 .help("File system label for live images (max 32 bytes)"),
         )
         .arg(
+            Arg::with_name("repodir")
+                .long("repo")
+                .value_name("DIRECTORY")
+                .takes_value(true)
+                .help("Override remote URL from manifest with this local OSTree repository"),
+        )
+        .arg(
             Arg::with_name("force")
                 .short("f")
                 .long("force")
@@ -118,7 +125,7 @@ fn main() {
         }
     }
 
-    match creator::Manifest::from_file(Path::new(matches.value_of("manifest").unwrap())) {
+    match creator::Manifest::from_file(Path::new(matches.value_of("manifest").unwrap()), matches.value_of("repodir")) {
         Err(why) => {
             error!("{}", why);
             process::exit(1);

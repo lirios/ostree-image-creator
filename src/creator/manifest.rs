@@ -82,9 +82,12 @@ fn default_live_squashfs_compression() -> String {
 }
 
 impl Manifest {
-    pub fn from_file(path: &path::Path) -> Result<Manifest, Box<dyn std::error::Error + 'static>> {
+    pub fn from_file(path: &path::Path, repo: Option<&str>) -> Result<Manifest, Box<dyn std::error::Error + 'static>> {
         let contents = fs::read_to_string(path)?;
-        let manifest: Manifest = serde_yaml::from_str(&contents)?;
+        let mut manifest: Manifest = serde_yaml::from_str(&contents)?;
+        if repo.is_some() {
+            manifest.remote_url = String::from(format!("file://{}", repo.unwrap()));
+        }
         return Ok(manifest);
     }
 }
