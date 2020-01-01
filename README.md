@@ -18,6 +18,7 @@ environment variable, please check [this](https://doc.rust-lang.org/1.1.0/log/in
 sudo dnf install -y \
     coreutils \
     util-linux \
+    e2fsprogs \
     ostree \
     syslinux \
     syslinux-nonlinux \

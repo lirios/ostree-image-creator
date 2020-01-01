@@ -14,6 +14,7 @@ RUN set -ex && \
     dnf install -y --setopt='tsflags=' --nodocs \
         coreutils \
         util-linux \
+        e2fsprogs \
         ostree \
         syslinux \
         syslinux-nonlinux \
