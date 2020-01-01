@@ -43,8 +43,9 @@ impl DiskImage {
 }
 
 impl Drop for DiskImage {
+    #[allow(unused_must_use)]
     fn drop(&mut self) {
         // Unmount the file system and ignore errors
-        self.umount().unwrap();
+        self.umount();
     }
 }
