@@ -5,7 +5,6 @@
  ***************************************************************************/
 
 use log::trace;
-use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 use std::result::Result;
@@ -36,7 +35,7 @@ fn result_from_status(status: ExitStatus) -> OstreeResult<()> {
     if !status.success() {
         match status.code() {
             Some(code) => Err(OstreeError::CommandExited(code)),
-            None => Err(OstreeError::ProcessTerminated)
+            None => Err(OstreeError::ProcessTerminated),
         }
     } else {
         Ok(())
@@ -85,17 +84,6 @@ impl OstreeCommand {
         }
     }
 
-    pub fn initialize(&mut self) {
-        unsafe {
-            self.cmd.pre_exec(|| {
-                // Setsid in the child to avoid SIGINT on the creator
-                // killing child and breaking the graceful shutdown
-                libc::setsid();
-                Ok(())
-            });
-        }
-    }
-
     pub fn arg(&mut self, arg: &str) -> &mut OstreeCommand {
         self.cmd.arg(&arg);
         self.args.push(arg.to_string());
@@ -134,7 +122,6 @@ impl OstreeCommand {
 
 pub fn init(repo_path: &Path, mode: OstreeArchiveMode) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", repo_path.to_string_lossy()))
         .arg("init");
@@ -149,7 +136,6 @@ pub fn init(repo_path: &Path, mode: OstreeArchiveMode) -> OstreeResult<()> {
 
 pub fn resolve_rev(repo_path: &Path, refspec: &str) -> OstreeResult<String> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", repo_path.to_string_lossy()))
         .arg("rev-parse")
@@ -160,7 +146,6 @@ pub fn resolve_rev(repo_path: &Path, refspec: &str) -> OstreeResult<String> {
 
 pub fn remote_add(repo_path: &Path, osname: &str, remote_url: &str) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", repo_path.to_string_lossy()))
         .arg("remote")
@@ -175,7 +160,6 @@ pub fn remote_add(repo_path: &Path, osname: &str, remote_url: &str) -> OstreeRes
 
 pub fn mirror(repo_path: &Path, osname: &str, refspec: &str) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", repo_path.to_string_lossy()))
         .arg("pull")
@@ -191,7 +175,6 @@ pub fn pull_local(
     refs: &Vec<String>,
 ) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", dstrepo_path.to_string_lossy()))
         .arg("pull-local")
@@ -206,7 +189,6 @@ pub fn pull_local(
 
 pub fn list(repo_path: &Path, path: &Path, rev: &str) -> OstreeResult<IntoIter<String>> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", repo_path.to_string_lossy()))
         .arg("ls")
@@ -224,7 +206,6 @@ pub fn checkout(
     rev: &str,
 ) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg(&format!("--repo={}", repo_path.to_string_lossy()))
         .arg("checkout")
@@ -238,7 +219,6 @@ pub fn checkout(
 
 pub fn os_init(osname: &str, sysroot_path: &Path) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg("admin")
         .arg("os-init")
@@ -250,7 +230,6 @@ pub fn os_init(osname: &str, sysroot_path: &Path) -> OstreeResult<()> {
 
 pub fn deploy(osname: &str, refspec: &str, sysroot_path: &Path) -> OstreeResult<()> {
     let mut cmd = OstreeCommand::new();
-    cmd.initialize();
 
     cmd.arg("admin")
         .arg("deploy")
