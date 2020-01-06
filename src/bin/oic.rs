@@ -27,13 +27,6 @@ fn main() {
         .format_module_path(false)
         .init();
 
-    unsafe {
-        if libc::geteuid() != 0 {
-            error!("Please run this as root!");
-            process::exit(1);
-        }
-    }
-
     // Determine architecture
     let arch = match uname::uname() {
         Err(why) => {
@@ -107,6 +100,13 @@ fn main() {
                 .help("Name of the image file to create"),
         )
         .get_matches();
+
+    unsafe {
+        if libc::geteuid() != 0 {
+            error!("Please run this as root!");
+            process::exit(1);
+        }
+    }
 
     if matches.is_present("configdir") {
         let configdir = matches.value_of("configdir").unwrap();
