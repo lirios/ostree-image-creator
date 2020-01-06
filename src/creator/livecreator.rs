@@ -389,8 +389,9 @@ impl Creator for LiveCreator {
         }
 
         // See if checkisomd5 is available, so we add an entry to the bootloader
-        let has_checkisomd5 =
-            ostree::list(&self.repodir, Path::new("/usr/bin/checkisomd5"), &commit)?.len() > 0;
+        let has_checkisomd5 = ostree::list(&self.repodir, Path::new("/usr/bin"), &commit)?
+            .find(|s| s == "/usr/bin/checkisomd5")
+            .is_some();
 
         // Create rootfs
         self.create_rootfs(&tmp_dir.path())?;
