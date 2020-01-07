@@ -12,6 +12,8 @@ for an OSTree-based operating system.
 This program uses Rust logging that you can configure with the `RUST_LOG`
 environment variable, please check [this](https://doc.rust-lang.org/1.1.0/log/index.html) out.
 
+If you want to trace which commands are executed, set `RUST_LOG=trace`.
+
 ## Dependencies
 
 ```sh
