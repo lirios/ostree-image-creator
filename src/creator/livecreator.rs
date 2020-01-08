@@ -187,6 +187,33 @@ impl LiveCreator {
         Ok(())
     }
 
+    fn unset_immutable(&self, rootfs_path: &Path) -> BuildResult {
+        step!("Remove immutable attribute from deployment");
+        let deploymentdir = rootfs_path
+            .join("ostree")
+            .join("deploy")
+            .join(&self.osname)
+            .join("deploy");
+        if let Ok(entries) = fs::read_dir(&deploymentdir) {
+            for entry in entries {
+                if let Ok(entry) = entry {
+                    if let Ok(file_type) = entry.file_type() {
+                        if file_type.is_dir() {
+                            cmd::run(&[
+                                "chattr",
+                                "-i",
+                                &entry.path().to_string_lossy().into_owned(),
+                            ])?;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+
     fn create_efiboot(&self, dir_path: &Path, filename: &Path, mountpoint: &Path) -> BuildResult {
         step!("Creating EFI boot image");
 
@@ -356,6 +383,9 @@ impl Creator for LiveCreator {
         let rootfs_path = tmp_dir.path().join("rootfs");
         self.create_rootfs(&liveos_path, &rootfs_path)?;
         self.create_squashfs(&liveos_path, &rootfs_path)?;
+
+        // Remove immutable attribute from the deployment directory
+        self.unset_immutable(&rootfs_path)?;
 
         // Add extra kernel arguments
         let mut kargs_list: Vec<String> = self.extra_kargs.to_owned();
