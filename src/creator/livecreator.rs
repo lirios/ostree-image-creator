@@ -377,7 +377,10 @@ impl Creator for LiveCreator {
 
         // Add extra kernel arguments
         let mut kargs_list: Vec<String> = self.extra_kargs.to_owned();
-        for karg in &["oic.live", &format!("oic.live.label={}", &self.fslabel)] {
+        for karg in &[
+            "rd.live.image",
+            &format!("oic.live.label={}", &self.fslabel),
+        ] {
             if !kargs_list.contains(&karg.to_string()) {
                 kargs_list.push(karg.to_string());
             }
@@ -432,7 +435,7 @@ impl Creator for LiveCreator {
             t.add_stanza(
                 "check",
                 &format!("Test this ^media & start {}", &self.live_product),
-                &format!("{} oic.live.check", &kargs),
+                &format!("{} rd.live.check", &kargs),
             );
         }
         t.set_vesa_kargs(&kargs);
