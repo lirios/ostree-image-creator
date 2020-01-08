@@ -41,7 +41,7 @@ pub struct LiveCreator {
     live_title: String,
     live_product: String,
     live_timeout: u32,
-    squashfs_compression: String,
+    compression_args: String,
     extra_kargs: Vec<String>,
     force: bool,
     osname: String,
@@ -98,7 +98,7 @@ impl LiveCreator {
             live_title: manifest.live.title.to_owned(),
             live_product: manifest.live.product.to_owned(),
             live_timeout: manifest.live.timeout,
-            squashfs_compression: manifest.live.squashfs_compression.to_owned(),
+            compression_args: manifest.live.compression_args.to_owned(),
             extra_kargs: manifest.extra_kargs.to_owned(),
             force: force,
             osname: manifest.osname.to_owned(),
@@ -189,21 +189,18 @@ impl LiveCreator {
     }
 
     fn create_squashfs(&self, liveos_path: &Path, rootfs_path: &Path) -> BuildResult {
-        step!("Compressing squashfs with {}", &self.squashfs_compression);
+        step!("Compressing squashfs");
 
         fs::create_dir_all(&liveos_path)?;
 
-        let squashfs_path = liveos_path.join("squashfs.img");
-        cmd::run_with_cwd(
-            &[
-                "mksquashfs",
-                ".",
-                &squashfs_path.into_os_string().into_string().unwrap(),
-                "-comp",
-                &self.squashfs_compression,
-            ],
-            &rootfs_path,
-        )?;
+        let squashfs_path = liveos_path
+            .join("squashfs.img")
+            .to_string_lossy()
+            .to_string();
+        let mut args = vec!["mksquashfs", ".", &squashfs_path];
+        let mut more_args = self.compression_args.split(' ').collect();
+        args.append(&mut more_args);
+        cmd::run_with_cwd(&args, &rootfs_path)?;
 
         Ok(())
     }

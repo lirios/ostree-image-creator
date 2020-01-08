@@ -29,9 +29,9 @@ pub struct LiveOptions {
     #[serde(default = "default_live_timeout")]
     pub timeout: u32,
 
-    #[serde(rename(deserialize = "squashfs-compression"))]
-    #[serde(default = "default_live_squashfs_compression")]
-    pub squashfs_compression: String,
+    #[serde(rename(deserialize = "compression-args"))]
+    #[serde(default = "default_live_compression_args")]
+    pub compression_args: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -84,12 +84,15 @@ fn default_live_timeout() -> u32 {
     600
 }
 
-fn default_live_squashfs_compression() -> String {
-    "zstd".to_string()
+fn default_live_compression_args() -> String {
+    "-b 1M -no-recovery -comp zstd".to_string()
 }
 
 impl Manifest {
-    pub fn from_file(path: &path::Path, repo: Option<&str>) -> Result<Manifest, Box<dyn std::error::Error + 'static>> {
+    pub fn from_file(
+        path: &path::Path,
+        repo: Option<&str>,
+    ) -> Result<Manifest, Box<dyn std::error::Error + 'static>> {
         let contents = fs::read_to_string(path)?;
         let mut manifest: Manifest = serde_yaml::from_str(&contents)?;
         if repo.is_some() {
