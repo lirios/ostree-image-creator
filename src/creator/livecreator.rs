@@ -19,7 +19,6 @@ use crate::diskimage::DiskImage;
 use crate::ostree;
 use crate::templates;
 
-use bytefmt;
 use log::{debug, error, info};
 use std::convert::From;
 use std::fs;
@@ -47,7 +46,6 @@ pub struct LiveCreator {
     force: bool,
     osname: String,
     arch: String,
-    size: u64,
     selinux: bool,
     repodir: PathBuf,
     repo_is_local: bool,
@@ -66,15 +64,6 @@ impl LiveCreator {
         force: bool,
         manifest: &Manifest,
     ) -> LiveCreator {
-        // Parse size from manifest
-        let size = match bytefmt::parse(&manifest.size) {
-            Err(why) => {
-                error!("Cannot parse \"size\" value from manifest: {}", why);
-                process::exit(1);
-            }
-            Ok(result) => result,
-        };
-
         // Determine volume label
         let now = chrono::Utc::now();
         let volset = format!(
@@ -114,7 +103,6 @@ impl LiveCreator {
             force: force,
             osname: manifest.osname.to_owned(),
             arch: arch.to_string(),
-            size: size,
             selinux: manifest.selinux,
             repodir: repodir,
             repo_is_local: is_local,
@@ -162,23 +150,14 @@ impl LiveCreator {
         Ok(total_size)
     }
 
-    fn create_rootfs(&self, tmp_path: &Path) -> BuildResult {
+    fn create_rootfs(&self, liveos_path: &Path, rootfs_path: &Path) -> BuildResult {
         step!("Creating root file system");
 
-        let dir_path = tmp_path.join("squashfs").join("LiveOS");
-        let file_path = dir_path.join("rootfs.img");
-        let mountpoint_path = tmp_path.join("root");
-
-        fs::create_dir_all(&dir_path)?;
-
-        // Mount disk image
-        let disk = DiskImage::new(&file_path, &mountpoint_path);
-        disk.create(self.size)?;
-        disk.format("ext4")?;
-        disk.mount()?;
+        fs::create_dir_all(&liveos_path)?;
+        fs::create_dir_all(&rootfs_path)?;
 
         // Pull and deploy OS tree
-        let ostreedir = mountpoint_path.join("ostree");
+        let ostreedir = rootfs_path.join("ostree");
         let repodir = ostreedir.join("repo");
         let deploydir = ostreedir.join("deploy");
         fs::create_dir_all(&repodir)?;
@@ -187,8 +166,8 @@ impl LiveCreator {
         ostree::init(&repodir, ostree::OstreeArchiveMode::Bare)?;
         ostree::pull_local(&self.repodir, &repodir, &self.refs)?;
         step!("Deploying OS tree");
-        ostree::os_init(&self.osname, &mountpoint_path)?;
-        ostree::deploy(&self.osname, &self.refspec, &mountpoint_path)?;
+        ostree::os_init(&self.osname, &rootfs_path)?;
+        ostree::deploy(&self.osname, &self.refspec, &rootfs_path)?;
 
         // Create a few directories under /var and label /var/home to make SELinux happy
         // https://github.com/coreos/ignition-dracut/pull/79#issuecomment-488446949
@@ -209,7 +188,7 @@ impl LiveCreator {
         Ok(())
     }
 
-    fn create_squashfs(&self, liveos_path: &Path, root_path: &Path) -> BuildResult {
+    fn create_squashfs(&self, liveos_path: &Path, rootfs_path: &Path) -> BuildResult {
         step!("Compressing squashfs with {}", &self.squashfs_compression);
 
         fs::create_dir_all(&liveos_path)?;
@@ -223,7 +202,7 @@ impl LiveCreator {
                 "-comp",
                 &self.squashfs_compression,
             ],
-            &root_path,
+            &rootfs_path,
         )?;
 
         Ok(())
@@ -394,17 +373,18 @@ impl Creator for LiveCreator {
             .is_some();
 
         // Create rootfs
-        self.create_rootfs(&tmp_dir.path())?;
-
-        // Compress squashfs
-        self.create_squashfs(
-            &tmp_isoroot.join("LiveOS"),
-            &tmp_dir.path().join("squashfs"),
-        )?;
+        let liveos_path = tmp_isoroot.join("LiveOS");
+        let rootfs_path = tmp_dir.path().join("rootfs");
+        self.create_rootfs(&liveos_path, &rootfs_path)?;
+        self.create_squashfs(&liveos_path, &rootfs_path)?;
 
         // Add extra kernel arguments
         let mut kargs_list: Vec<String> = self.extra_kargs.to_owned();
-        for karg in &["quiet", "rd.live.image"] {
+        for karg in &[
+            "quiet",
+            "oic.live",
+            &format!("oic.live.label={}", &self.fslabel),
+        ] {
             if !kargs_list.contains(&karg.to_string()) {
                 kargs_list.push(karg.to_string());
             }
@@ -459,7 +439,7 @@ impl Creator for LiveCreator {
             t.add_stanza(
                 "check",
                 &format!("Test this ^media & start {}", &self.live_product),
-                &format!("{} rd.live.check", &kargs),
+                &format!("{} oic.live.check", &kargs),
             );
         }
         t.set_vesa_kargs(&kargs);
