@@ -537,6 +537,13 @@ impl Creator for LiveCreator {
         cmd::run(&["mv", "-f", &tmp_isofile, &self.filename])?;
         println!("Wrote: {}", &self.filename);
 
+        // Calculate checksum
+        let output = cmd::output(&["sha256sum", "-b", "--tag", &self.filename])?;
+        let checksum_filename = self.filename.replace(".iso", "-CHECKSUM");
+        let mut checksum_file = fs::File::create(&checksum_filename)?;
+        checksum_file.write_all(&output.stdout)?;
+        println!("Wrote: {}", &checksum_filename);
+
         Ok(())
     }
 }

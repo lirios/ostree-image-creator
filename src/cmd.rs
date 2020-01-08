@@ -37,10 +37,21 @@ fn result_from_status(status: ExitStatus) -> CommandResult<()> {
     if !status.success() {
         match status.code() {
             Some(code) => Err(CommandError::CommandExited(code)),
-            None => Err(CommandError::ProcessTerminated)
+            None => Err(CommandError::ProcessTerminated),
         }
     } else {
         Ok(())
+    }
+}
+
+fn result_from_redirect(output: Output) -> CommandResult<Output> {
+    if !output.status.success() {
+        match output.status.code() {
+            Some(code) => Err(CommandError::CommandExited(code)),
+            None => Err(CommandError::ProcessTerminated),
+        }
+    } else {
+        Ok(output)
     }
 }
 
@@ -107,4 +118,14 @@ pub fn no_output(args: &[&str]) -> CommandResult<()> {
         .output()
         .map_err(|e| CommandError::ExecFailed(args[0].to_string(), e.to_string()))
         .and_then(|output| result_from_output(output, &args[0]))
+}
+
+pub fn output(args: &[&str]) -> CommandResult<Output> {
+    trace!("+ {}", shell_words::join(args));
+
+    Command::new(&args[0])
+        .args(&args[1..])
+        .output()
+        .map_err(|e| CommandError::ExecFailed(args[0].to_string(), e.to_string()))
+        .and_then(|output| result_from_redirect(output))
 }
