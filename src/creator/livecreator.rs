@@ -380,11 +380,7 @@ impl Creator for LiveCreator {
 
         // Add extra kernel arguments
         let mut kargs_list: Vec<String> = self.extra_kargs.to_owned();
-        for karg in &[
-            "quiet",
-            "oic.live",
-            &format!("oic.live.label={}", &self.fslabel),
-        ] {
+        for karg in &["oic.live", &format!("oic.live.label={}", &self.fslabel)] {
             if !kargs_list.contains(&karg.to_string()) {
                 kargs_list.push(karg.to_string());
             }
