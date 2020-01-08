@@ -33,9 +33,7 @@ fn main() {
             error!("{}", why);
             process::exit(1);
         }
-        Ok(utsinfo) => {
-            utsinfo.machine.to_owned()
-        }
+        Ok(utsinfo) => utsinfo.machine.to_owned(),
     };
 
     // Command line arguments
@@ -125,7 +123,10 @@ fn main() {
         }
     }
 
-    match creator::Manifest::from_file(Path::new(matches.value_of("manifest").unwrap()), matches.value_of("repodir")) {
+    match creator::Manifest::from_file(
+        Path::new(matches.value_of("manifest").unwrap()),
+        matches.value_of("repodir"),
+    ) {
         Err(why) => {
             error!("{}", why);
             process::exit(1);

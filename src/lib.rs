@@ -23,8 +23,8 @@ use crate::creator::Manifest;
 use log::error;
 use std::process;
 
-pub mod creator;
 pub mod cmd;
+pub mod creator;
 pub mod diskimage;
 mod ostree;
 pub mod templates;

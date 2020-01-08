@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  ***************************************************************************/
 
-use tera::{Context, Tera, Result};
 use serde::Serialize;
+use tera::{Context, Result, Tera};
 
 #[derive(Serialize)]
 struct Stanza {
