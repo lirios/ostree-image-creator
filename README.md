@@ -32,13 +32,6 @@ sudo dnf install -y \
     grub2
 ```
 
-If SELinux is enabled in your manifest file, you need to install the tools:
-
-```sh
-sudo dnf install -y \
-    libselinux-utils
-```
-
 ## Installation
 
 Build with:

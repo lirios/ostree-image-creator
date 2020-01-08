@@ -46,7 +46,6 @@ pub struct LiveCreator {
     force: bool,
     osname: String,
     arch: String,
-    selinux: bool,
     repodir: PathBuf,
     repo_is_local: bool,
     remote_url: String,
@@ -103,7 +102,6 @@ impl LiveCreator {
             force: force,
             osname: manifest.osname.to_owned(),
             arch: arch.to_string(),
-            selinux: manifest.selinux,
             repodir: repodir,
             repo_is_local: is_local,
             remote_url: manifest.remote_url.to_owned(),
@@ -168,22 +166,6 @@ impl LiveCreator {
         step!("Deploying OS tree");
         ostree::os_init(&self.osname, &rootfs_path)?;
         ostree::deploy(&self.osname, &self.refspec, &rootfs_path)?;
-
-        // Create a few directories under /var and label /var/home to make SELinux happy
-        // https://github.com/coreos/ignition-dracut/pull/79#issuecomment-488446949
-        let vardir = deploydir.join(&self.osname).join("var");
-        for dirname in &["home", "log/journal", "lib/systemd"] {
-            fs::create_dir_all(vardir.join(&dirname))?;
-        }
-        let homedir = vardir.join("home");
-        if self.selinux {
-            let label = cmd::check_output(&["matchpathcon", "-n", "/home"])?.to_string();
-            cmd::run(&[
-                "chcon",
-                &label,
-                &homedir.into_os_string().into_string().unwrap(),
-            ])?;
-        }
 
         Ok(())
     }
