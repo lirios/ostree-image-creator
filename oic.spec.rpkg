@@ -12,6 +12,19 @@ ExclusiveArch:  %{rust_arches}
 
 BuildRequires:  rust-packaging
 
+Requires: coreutils
+Requires: util-linux
+Requires: e2fsprogs
+Requires: dosfstools
+Requires: ostree
+Requires: syslinux
+Requires: syslinux-nonlinux
+Requires: genisoimage
+Requires: xorriso
+Requires: isomd5sum
+Requires: squashfs-tools
+Requires: grub2
+
 %description
 Tools to create OSTree images.
 
