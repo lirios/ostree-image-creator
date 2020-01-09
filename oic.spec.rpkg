@@ -1,0 +1,31 @@
+Name:           {{{ git_dir_name }}}
+Version:        {{{ git_dir_version }}}
+Release:        1%{?dist}
+Summary:        Tools to create OSTree images
+
+License:        GPLv3
+URL:            https://github.com/lirios/ostree-image-creator
+VCS:            {{{ git_dir_vcs }}}
+Source:         {{{ git_dir_pack }}}
+
+ExclusiveArch:  %{rust_arches}
+
+BuildRequires:  rust-packaging
+
+%description
+Tools to create OSTree images.
+
+%prep
+{{{ git_dir_setup_macro }}}
+
+%build
+cargo build --locked
+
+%install
+install -Dm755 target/debug/oic %{buildroot}%{_bindir}/oic
+
+%files
+%{_bindir}/oic
+
+%changelog
+{{{ git_dir_changelog }}}
