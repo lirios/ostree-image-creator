@@ -149,6 +149,7 @@ fn main() {
                 matches.value_of("workdir").unwrap(),
                 configdir,
                 matches.value_of("output"),
+                matches.value_of("fslabel"),
                 matches.is_present("force"),
             );
         }

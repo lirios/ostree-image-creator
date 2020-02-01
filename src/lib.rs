@@ -35,6 +35,7 @@ pub fn start(
     workdir: &str,
     configdir: Option<&str>,
     filename: Option<&str>,
+    fslabel: Option<&str>,
     force: bool,
 ) {
     match manifest.image_type {
@@ -53,7 +54,7 @@ pub fn start(
         }
         creator::ImageType::Live => {
             let creator = creator::LiveCreator::new(
-                &arch, &workdir, configdir, filename, None, force, &manifest,
+                &arch, &workdir, configdir, filename, fslabel, force, &manifest,
             );
             match creator.build() {
                 Err(why) => {
