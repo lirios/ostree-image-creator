@@ -74,7 +74,7 @@ fn default_live_product() -> String {
 }
 
 fn default_live_timeout() -> u32 {
-    600
+    60
 }
 
 fn default_live_compression_args() -> String {
