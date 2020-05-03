@@ -3,7 +3,7 @@ ostree-image-creator
 
 [![License](https://img.shields.io/badge/license-GPLv3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![GitHub release](https://img.shields.io/github/release/lirios/ostree-image-creator.svg)](https://github.com/lirios/ostree-image-creator)
-[![Build Status](https://travis-ci.org/lirios/ostree-image-creator.svg?branch=develop)](https://travis-ci.org/lirios/ostree-image-creator)
+[![CI](https://github.com/lirios/ostree-image-creator/workflows/CI/badge.svg?branch=develop)](https://github.com/lirios/ostree-image-creator/actions?query=workflow%3ACI)
 [![GitHub issues](https://img.shields.io/github/issues/lirios/ostree-image-creator.svg)](https://github.com/lirios/ostree-image-creator/issues)
 
 ostree-image-creator, or `oic`, is a tool to create live and disk images

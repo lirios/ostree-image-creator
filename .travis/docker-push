@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-docker build -f Dockerfile.jenkins -t liriorg/ostree-image-creator .
-docker push liriorg/ostree-image-creator
