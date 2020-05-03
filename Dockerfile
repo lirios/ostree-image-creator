@@ -9,7 +9,7 @@ RUN set -ex && \
     mkdir /build && \
     cp target/release/oic /build/
 
-FROM fedora:31
+FROM fedora:latest
 RUN set -ex && \
     dnf install -y --setopt='tsflags=' --nodocs \
         coreutils \
