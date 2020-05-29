@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 name: Docker
 
 on:
@@ -12,8 +16,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Build container image
+      run: |
+        docker build -t liriorg/ostree-image-creator .
     - name: Publish to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker build -t liriorg/ostree-image-creator .
         docker push liriorg/ostree-image-creator

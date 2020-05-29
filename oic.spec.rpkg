@@ -1,3 +1,17 @@
+# SPDX-FileCopyrightText: 2020 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# See https://docs.fedoraproject.org/en-US/packaging-guidelines/Golang/
+
+%if 0%{?with_debug}
+%global _dwz_low_mem_die_limit 0
+%else
+%global debug_package   %{nil}
+%endif
+
+%global import_path github.com/lirios/ostree-image-creator
+
 Name:           {{{ git_dir_name }}}
 Version:        {{{ git_dir_version }}}
 Release:        1%{?dist}
@@ -8,17 +22,18 @@ URL:            https://github.com/lirios/ostree-image-creator
 VCS:            {{{ git_dir_vcs }}}
 Source:         {{{ git_dir_pack }}}
 
-ExclusiveArch:  %{rust_arches}
+ExclusiveArch:  %{go_arches}
 
-BuildRequires:  rust-packaging
+BuildRequires:  compiler(go-compiler)
+BuildRequires:  go-rpm-macros
+BuildRequires:  ostree-devel
+BuildRequires:  git
 
 Requires: coreutils
 Requires: util-linux
 Requires: e2fsprogs
 Requires: dosfstools
 Requires: ostree
-Requires: syslinux
-Requires: syslinux-nonlinux
 Requires: genisoimage
 Requires: xorriso
 Requires: isomd5sum
@@ -32,13 +47,10 @@ Tools to create OSTree images.
 {{{ git_dir_setup_macro }}}
 
 %build
-cargo build --locked
+make
 
 %install
-install -Dm755 target/debug/oic %{buildroot}%{_bindir}/oic
+make install DESTDIR=%{buildroot} PREFIX=%{_prefix}
 
 %files
 %{_bindir}/oic
-
-%changelog
-{{{ git_dir_changelog }}}

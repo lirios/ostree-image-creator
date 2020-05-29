@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 name: CI
 
 on:
@@ -14,9 +18,27 @@ jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: [ '^1.14' ]
+    name: Go ${{ matrix.go }}
     steps:
-    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: sudo apt-get install -y make libostree-dev
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go }}
     - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      run: make
+
+  docker:
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build container image
+      run: docker build -t liriorg/ostree-image-creator .

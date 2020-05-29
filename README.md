@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 ostree-image-creator
 ====================
 
@@ -9,12 +15,29 @@ ostree-image-creator
 ostree-image-creator, or `oic`, is a tool to create live and disk images
 for an OSTree-based operating system.
 
-This program uses Rust logging that you can configure with the `RUST_LOG`
-environment variable, please check [this](https://doc.rust-lang.org/1.1.0/log/index.html) out.
+`oic` provides the following subcommands:
 
-If you want to trace which commands are executed, set `RUST_LOG=trace`.
+ * **resolve**: expands variables and expressions in the manifest file
+   and prints it to the screen.
+ * **build**: builds an image.
 
 ## Dependencies
+
+You need Go installed.
+
+On Fedora:
+
+```sh
+sudo dnf install -y golang
+```
+
+This programs also use the OSTree library:
+
+```sh
+sudo dnf install -y ostree-devel
+```
+
+And the following tools to make images:
 
 ```sh
 sudo dnf install -y \
@@ -23,8 +46,6 @@ sudo dnf install -y \
     e2fsprogs \
     dosfstools \
     ostree \
-    syslinux \
-    syslinux-nonlinux \
     genisoimage \
     xorriso \
     isomd5sum \
@@ -32,18 +53,44 @@ sudo dnf install -y \
     grub2
 ```
 
-## Installation
+Download all the Go dependencies:
+
+```sh
+go mod download
+```
+
+## Build
 
 Build with:
 
 ```sh
-cargo build
+make
 ```
 
-Run with (it needs root privileges):
+## Install
+
+Install with:
 
 ```sh
-sudo cargo run
+make install
+```
+
+The default prefix is `/usr/local` but you can specify another one:
+
+```sh
+make install PREFIX=/usr
+```
+
+And you can also relocate the binaries, this is particularly
+useful when building packages:
+
+```
+...
+
+%install
+make install DESTDIR=%{buildroot} PREFIX=%{_prefix}
+
+...
 ```
 
 ## Licensing

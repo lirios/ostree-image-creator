@@ -1,13 +1,18 @@
-FROM rust:1.40-slim AS build
+# SPDX-FileCopyrightText: 2020 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+FROM golang:alpine AS build
 RUN mkdir /source
-COPY Cargo* /source/
-COPY src/ /source/src
+COPY . /source/
 WORKDIR /source
 RUN set -ex && \
-    cargo build --release && \
-    strip target/release/oic && \
+    apk --no-cache add ca-certificates build-base make git ostree-dev && \
+    go mod download && \
+    make && \
+    strip bin/oic && \
     mkdir /build && \
-    cp target/release/oic /build/
+    cp bin/oic /build/
 
 FROM fedora:latest
 RUN set -ex && \
@@ -24,5 +29,5 @@ RUN set -ex && \
         isomd5sum \
         squashfs-tools \
         grub2
-COPY --from=build /build/oic /usr/bin
-CMD "/usr/bin/oic"
+COPY --from=build /build/oic /usr/local/bin/oic
+CMD "/usr/local/bin/oic"
