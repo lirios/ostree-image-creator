@@ -1,4 +1,9 @@
+# SPDX-FileCopyrightText: 2020 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Ignore output files
+/bin/oic
 /tmp
 *.img
 *.iso
@@ -6,9 +11,8 @@
 *.vmdk
 *.vmx
 
-# Ignore Rust binary files
-/target
-**/*.rs.bk
-
 # Ignore Visual Studio Code
 *.code-workspace
+
+# Ignore git stuff
+.git
