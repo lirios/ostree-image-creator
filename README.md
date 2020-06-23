@@ -49,6 +49,7 @@ sudo dnf install -y \
     genisoimage \
     xorriso \
     isomd5sum \
+    syslinux \
     squashfs-tools \
     grub2
 ```

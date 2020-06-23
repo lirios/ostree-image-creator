@@ -37,6 +37,7 @@ Requires: ostree
 Requires: genisoimage
 Requires: xorriso
 Requires: isomd5sum
+Requires: syslinux
 Requires: squashfs-tools
 Requires: grub2
 
