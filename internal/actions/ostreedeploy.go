@@ -98,9 +98,9 @@ func (a *OstreeDeployAction) Run(context *oic.Context) error {
 	deployDir := filepath.Join(deployRootDir, a.OSName, "deploy")
 	err := filepath.Walk(deployDir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
-			if err := executeCommand(context, "chattr", "-i", path); err != nil {
-				return err
-			}
+			// Ignore errors because the file system might not support it making the command fail
+			// TODO: Restore error checking and execute the command only when it's supported
+			executeCommand(context, "chattr", "-i", path)
 		}
 		return nil
 	})
