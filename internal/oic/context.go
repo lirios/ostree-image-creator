@@ -7,6 +7,7 @@ package oic
 // Context represents the context of the application
 type Context struct {
 	Architecture string
+	ManifestDir  string
 	OutputDir    string
 	WorkspaceDir string
 	ScrapDir     string

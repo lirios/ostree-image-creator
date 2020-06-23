@@ -29,6 +29,7 @@ func (a *TemplateAction) Validate(context *oic.Context) error {
 	if a.Template == "" {
 		return fmt.Errorf("property \"template\" is mandatory for the \"%s\" action", a)
 	}
+	a.Template = filepath.Join(context.ManifestDir, a.Template)
 
 	if a.Path == "" {
 		return fmt.Errorf("property \"path\" is mandatory for the \"%s\" action", a)

@@ -164,7 +164,8 @@ func main() {
 
 			// Set current working directory to the location of the
 			// manifest file, so that it can reference relative files
-			if err := os.Chdir(filepath.Dir(manifestPath)); err != nil {
+			manifestDir := filepath.Dir(manifestPath)
+			if err := os.Chdir(manifestDir); err != nil {
 				logger.Errorf("Failed to change current working directory: %v", err)
 				exitCode = 1
 				return
@@ -204,6 +205,7 @@ func main() {
 			// Context
 			context := &oic.Context{
 				Architecture: arch,
+				ManifestDir:  manifestDir,
 				OutputDir:    outDir,
 				WorkspaceDir: tempDir,
 				ScrapDir:     scrapDir,

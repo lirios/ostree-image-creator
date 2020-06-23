@@ -29,10 +29,12 @@ func (a *CopyAction) Validate(context *oic.Context) error {
 	if a.From == "" {
 		return fmt.Errorf("property \"from\" is mandatory for the \"%s\" action", a)
 	}
+	a.From = filepath.Join(context.ManifestDir, a.From)
 
 	if a.To == "" {
 		return fmt.Errorf("property \"to\" is mandatory for the \"%s\" action", a)
 	}
+	a.To = filepath.Join(context.WorkspaceDir, a.To)
 
 	return nil
 }
