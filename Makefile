@@ -23,6 +23,10 @@ build: $(BINDIR)/$(BINNAME)
 $(BINDIR)/$(BINNAME): $(GO_SRC) $(C_SRC)
 	(cd cmd/oic && GO111MODULE=on go build $(GOFLAGS) -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -o $@)
 
+.PHONY: install
+install: $(BINDIR)/$(BINNAME)
+	install -Dm755 $< $(DESTDIR)$(PREFIX)/bin/$(BINNAME)
+
 .PHONY: clean
 clean:
 	@rm -rf $(BINDIR)
