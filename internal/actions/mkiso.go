@@ -168,10 +168,10 @@ func (a *MkisoAction) sha256sum(context *oic.Context) error {
 		"sha256sum",
 		"-b",
 		"--tag",
-		a.Artifacts.IsoFileName,
+		filepath.Base(a.Artifacts.IsoFileName),
 	}
 
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Dir = a.Path
+	cmd.Dir = filepath.Dir(a.Artifacts.ChecksumFileName)
 	return oic.RunCommandWithOutput(cmd, file)
 }
