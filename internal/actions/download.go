@@ -13,7 +13,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/mholt/archiver"
+	"github.com/mholt/archives"
 
 	"github.com/lirios/ostree-image-creator/internal/logger"
 	"github.com/lirios/ostree-image-creator/internal/oic"
@@ -74,7 +74,7 @@ func (a *DownloadAction) Run(context *oic.Context) error {
 
 	// Unpack
 	if a.Unpack {
-		return archiver.Unarchive(a.DestPath, a.UnpackPath)
+		return archives.Extract(context.Background(), a.DestPath, nil, a.UnpackPath)
 	}
 
 	return nil
